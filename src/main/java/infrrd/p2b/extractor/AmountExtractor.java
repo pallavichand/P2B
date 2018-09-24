@@ -18,7 +18,7 @@ public class AmountExtractor implements DocumentDetailsExtractor {
 	String amountExtractionRegex = "(?<!\\d)(\\d{1,3}[,]?){1,3}\\d{1,3}[.]\\d{1,2}(?!\\d)";
 	@Override
 	public DocumentDetails extract(String ocrText, DocumentDetails docDetails) {
-		log.info("Inside AmountExtractor  --> OCR text {}", ocrText);
+	//	log.info("Inside AmountExtractor  --> OCR text {}", ocrText);
 		Pattern amountPattern = Pattern.compile(amountExtractionRegex);
 		Matcher amountMatcher = amountPattern.matcher(ocrText);
 		List<FieldDetails> amountList = new ArrayList<FieldDetails>();

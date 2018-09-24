@@ -23,6 +23,7 @@ import org.springframework.web.client.RestTemplate;
 import infrrd.p2b.entity.ChequeDetails;
 import infrrd.p2b.entity.DocumentDetails;
 import infrrd.p2b.extractor.AmountExtractor;
+import infrrd.p2b.extractor.ChequeNumberExtractor;
 import infrrd.p2b.extractor.DocumentDetailsExtractor;
 import infrrd.p2b.service.DocumentService;
 import infrrd.p2b.service.StorageService;
@@ -189,7 +190,8 @@ public class DocumentServiceImpl implements DocumentService{
 		DocumentDetailsExtractor documentDetailsExtractor = new AmountExtractor();
 		DocumentDetails documentDetails = new ChequeDetails();
 		documentDetailsExtractor.extract(ocrText, documentDetails);
-		
+		documentDetailsExtractor = new ChequeNumberExtractor();
+		documentDetailsExtractor.extract(ocrText, documentDetails);
 		
 
 		return mapOutValues;

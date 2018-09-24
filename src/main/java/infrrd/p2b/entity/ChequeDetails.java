@@ -8,6 +8,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class ChequeDetails extends DocumentDetails{
+public ChequeDetails(DocumentDetails docDetails) {
+		this.setAmount(docDetails.getAmount());
+	}
+
 String checkNumber;
 
 }
