@@ -43,7 +43,7 @@ public class P2BController {
 	StorageService storageService;
 
 	@CrossOrigin
-	@RequestMapping("/noa/fileupload")
+	@RequestMapping("/getDataFromFile")
 	@PostMapping()
 	public ResponseEntity<?> newDocumentFileUpload(@RequestPart("file") MultipartFile file) throws IOException {
 
@@ -51,9 +51,8 @@ public class P2BController {
 
 			final File uploadedFile;
 			uploadedFile = storageService.uploadFile(file);
-			Object documentService;
-			// Map<String, String> output =
-			// documentService.processDocumentwitoutUploading(uploadedFile);
+
+			Map<String, String> output =documentService.processDocumentwitoutUploading(uploadedFile);
 
 			log.info("<------------------START-------------------->");
 			log.info("*********************************************");

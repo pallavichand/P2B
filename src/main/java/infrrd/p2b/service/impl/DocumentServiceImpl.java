@@ -20,6 +20,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import infrrd.p2b.entity.ChequeDetails;
+import infrrd.p2b.entity.DocumentDetails;
+import infrrd.p2b.extractor.AmountExtractor;
+import infrrd.p2b.extractor.DocumentDetailsExtractor;
 import infrrd.p2b.service.DocumentService;
 import infrrd.p2b.service.StorageService;
 import lombok.extern.slf4j.Slf4j;
@@ -55,10 +59,10 @@ public class DocumentServiceImpl implements DocumentService{
 	public Map<String, String> processDocumentwitoutUploading(File file) throws IOException {
 		// TODO Auto-generated method stub
 		
-		Map<String, String> values = getTextFromFiles(file);
+		//Map<String, String> values = getTextFromFiles(file);
 		
 		//Map<String, String> values = getTextFromPDFUsingPoppler(file);
-		//Map<String, String> values = getTextLocally(file);
+		Map<String, String> values = getTextLocally(file);
 		
 		return values;
 		
@@ -68,9 +72,9 @@ public class DocumentServiceImpl implements DocumentService{
 
 	private Map<String, String> getTextLocally(File uploadedFile) throws IOException {
 
-		String staticFolder = "/home/kiranc/Downloads/RBC_POV_Documents/all_pdfs/tesseractNeeded";
+		String staticFolder = "/home/pallavi/work/Repos/POC/text";
 		String fileFolder = uploadedFile.getName().substring(0, uploadedFile.getName().lastIndexOf("."));
-		File textFilesFolder = new File(staticFolder + "/" + fileFolder + "/" + fileFolder);
+		File textFilesFolder = new File(staticFolder );
 		Map<Integer, String> intAbsolutePathNames = new HashMap<Integer, String>();
 
 		if (textFilesFolder.isDirectory()) {
@@ -117,7 +121,7 @@ public class DocumentServiceImpl implements DocumentService{
 		
 		//String refinedWordsAll = refineUtils.refineThis(sb.toString());
 		//String refinedWordsFirstPage = refineUtils.refineThis(sbonly1.toString());
-		Map<String, String> allTaxRelatedStuff = extractFields(sb.toString(), sb.toString());
+		Map<String, String> allTaxRelatedStuff = extractFields(sb.toString());
 		return allTaxRelatedStuff;
 
 	}
@@ -172,17 +176,19 @@ public class DocumentServiceImpl implements DocumentService{
 		}
 		//String refinedWordsAll = refineUtils.refineThis(sb.toString());
 		//String refinedWordsFirstPage = refineUtils.refineThis(sbonly1.toString());
-		Map<String, String> allTaxRelatedStuff = extractFields(sb.toString(), sb.toString());
+		Map<String, String> allTaxRelatedStuff = extractFields(sb.toString());
 		return allTaxRelatedStuff;
 
 	}
 	
-	private Map<String, String> extractFields(String getText, String getTextPage1) throws IOException {
+	private Map<String, String> extractFields(String ocrText) throws IOException {
 
 		Map<String, String> mapOutValues = new HashMap<>();
 		
 		
-		
+		DocumentDetailsExtractor documentDetailsExtractor = new AmountExtractor();
+		DocumentDetails documentDetails = new ChequeDetails();
+		documentDetailsExtractor.extract(ocrText, documentDetails);
 		
 		
 
@@ -283,7 +289,7 @@ public class DocumentServiceImpl implements DocumentService{
 				line = br.readLine();
 			}
 
-			return extractFields(sb.toString(), sb.toString());
+			return extractFields(sb.toString());
 		} finally {
 			br.close();
 		}
