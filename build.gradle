@@ -1,0 +1,51 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:2.0.5.RELEASE")
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+bootJar {
+    baseName = 'gs-spring-boot'
+    version =  '0.1.0'
+}
+
+repositories {
+    mavenCentral()
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+    compile("org.springframework.boot:spring-boot-starter-web")
+    // tag::actuator[]
+    compile("org.springframework.boot:spring-boot-starter-actuator")
+    // end::actuator[]
+    // tag::tests[]
+	compile("org.apache.commons:commons-lang3")
+	compile("org.apache.directory.studio:org.apache.commons.io:2.4")
+	
+	compile ('org.projectlombok:lombok:1.16.8')
+	compile group: 'org.json', name: 'json', version: '20090211'
+
+	
+	// https://mvnrepository.com/artifact/com.itextpdf/itextpdf
+    testCompile("org.springframework.boot:spring-boot-starter-test")
+    // Use JUnit test framework
+    // https://mvnrepository.com/artifact/info.debatty/java-string-similarity
+	compile group: 'info.debatty', name: 'java-string-similarity', version: '1.1.0'
+    
+    testImplementation 'junit:junit:4.12'
+    testCompile("org.springframework.boot:spring-boot-starter-test")
+    // end::tests[]
+}
+
