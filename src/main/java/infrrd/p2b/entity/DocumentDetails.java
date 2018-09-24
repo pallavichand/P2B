@@ -9,5 +9,6 @@ import lombok.NoArgsConstructor;
 @Data
 public class DocumentDetails {
 	private	String amount;
-	String checkNumber;
+	private	String checkNumber;
+	private	String payor;
 }

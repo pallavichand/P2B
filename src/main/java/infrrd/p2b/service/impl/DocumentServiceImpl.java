@@ -25,6 +25,7 @@ import infrrd.p2b.entity.DocumentDetails;
 import infrrd.p2b.extractor.AmountExtractor;
 import infrrd.p2b.extractor.ChequeNumberExtractor;
 import infrrd.p2b.extractor.DocumentDetailsExtractor;
+import infrrd.p2b.extractor.PayorPayeeExtractor;
 import infrrd.p2b.service.DocumentService;
 import infrrd.p2b.service.StorageService;
 import lombok.extern.slf4j.Slf4j;
@@ -220,8 +221,11 @@ public class DocumentServiceImpl implements DocumentService{
 		documentDetailsExtractor.extract(ocrText, documentDetails);
 		documentDetailsExtractor = new ChequeNumberExtractor();
 		documentDetailsExtractor.extract(ocrText, documentDetails);
+		documentDetailsExtractor = new PayorPayeeExtractor();
+		documentDetailsExtractor.extract(ocrText, documentDetails);
 		mapOutValues.put("Amount", documentDetails.getAmount());
 		mapOutValues.put("ChequeNumber", documentDetails.getCheckNumber());
+		mapOutValues.put("Payor", documentDetails.getPayor());
 		
 		
 		return mapOutValues;
