@@ -14,32 +14,47 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class ChequeNumberExtractor implements DocumentDetailsExtractor {
-	String chequeNumberExtractionRegex = "\\d{5,}$";
+	String findCheckwithKeywordRegex = "(Check)(\\W{1,4})(\\d{5,10})";
+	String [] chequeNumberExtractionRegexList = {"\\d{5,}$", "(?<!\\d)[\\d\\s]{9,15}$(?!\\d)"};
 
 	@Override
 	public DocumentDetails extract(String ocrText, DocumentDetails docDetails) {
 	//	log.info("Inside ChequeNumberExtractor class --> OCR text {}", ocrText);
-		String[] ocrTextArray = ocrText.split("\\n");
-		ChequeDetails checkDetails = new ChequeDetails(docDetails);
 		boolean checkNOFound = false;
-		int count = 0;
-		for (String lineText : ocrTextArray) {
-			count++;
-			lineText = lineText.replaceAll("[;.,]", "").trim();
-			Pattern chequePattern = Pattern.compile(chequeNumberExtractionRegex);
-			Matcher chequeMatcher = chequePattern.matcher(lineText);
-			if (chequeMatcher.find()) {
-				String chequeNO = chequeMatcher.group();
-				checkDetails.setCheckNumber(chequeNO);
-				checkNOFound = true;
-				log.info("Cheque Number Found  --> OCR text {}", chequeNO);
-			}
-			if (checkNOFound || count > 10) {
-				break;
+		Pattern chequePattern = Pattern.compile(findCheckwithKeywordRegex);
+		Matcher chequeMatcher = chequePattern.matcher(ocrText);
+		if(chequeMatcher.find()){
+			String chequeNO = chequeMatcher.group(3);
+			docDetails.setCheckNumber(chequeNO);
+			checkNOFound = true;
+		}
+		if (!checkNOFound) {
+			String[] ocrTextArray = ocrText.split("\\n");
+			for (String chequeNumberExtractionRegex : chequeNumberExtractionRegexList) {
+				int count = 0;
+				for (String lineText : ocrTextArray) {
+					count++;
+					lineText = lineText.replaceAll("[;.,|\\s]$", "").trim();
+					chequePattern = Pattern.compile(chequeNumberExtractionRegex);
+					chequeMatcher = chequePattern.matcher(lineText);
+					if (chequeMatcher.find()) {
+						String chequeNO = chequeMatcher.group().replaceAll(" ", "");
+						docDetails.setCheckNumber(chequeNO);
+						checkNOFound = true;
+						log.info("Cheque Number Found  --> OCR text {}", chequeNO);
+					}
+					if (checkNOFound || count > 10) {
+						break;
+					}
+				}
+				if (checkNOFound) {
+					break;
+				}
 			}
 		}
+		
 
-		return checkDetails;
+		return docDetails;
 	}
 
 }

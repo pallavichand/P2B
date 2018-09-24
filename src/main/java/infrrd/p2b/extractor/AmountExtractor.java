@@ -57,8 +57,8 @@ public class AmountExtractor implements DocumentDetailsExtractor {
 		Collections.sort(amountList, new Comparator<FieldDetails>() {
 			@Override
 			public int compare(FieldDetails p1, FieldDetails p2) {
+				if (p1.isVicinity() && p2.isVicinity() || !p1.isVicinity() && !p2.isVicinity()) {
 				if (p1.isSpecialSymbol() && p2.isSpecialSymbol() || !p1.isSpecialSymbol() && !p2.isSpecialSymbol()) {
-					if (p1.isVicinity() && p2.isVicinity() || !p1.isVicinity() && !p2.isVicinity()) {
 						return Double.valueOf(p2.getValues()).compareTo(Double.valueOf(p1.getValues()));
 					} else if (p2.isVicinity()) {
 						return 1;
@@ -90,7 +90,7 @@ public class AmountExtractor implements DocumentDetailsExtractor {
 	}
 
 	private String checkForVicinity(int start, String ocrText) {
-		String[] vicinityWords = { "account" };
+		String[] vicinityWords = { "account" , "total", "amount"};
 		int startIndex = start > 50 ? start - 50 : 0;
 		int endIndex = start + 50 > ocrText.length() - 1 ? ocrText.length() - 1 : start + 50;
 		String textToCheck = ocrText.toLowerCase().substring(startIndex, endIndex);

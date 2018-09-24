@@ -11,4 +11,6 @@ public interface DocumentService {
 	
 	Map<String, String> processDocument(File file) throws IOException;
 	
+	Map<String, String> getTextByPathToTest(String path) throws IOException;
+	
 }

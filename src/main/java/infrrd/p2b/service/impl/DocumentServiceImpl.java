@@ -127,6 +127,34 @@ public class DocumentServiceImpl implements DocumentService{
 
 	}
 
+	@Override
+	public Map<String, String> getTextByPathToTest(String path) throws IOException {
+
+		BufferedReader br;
+
+		StringBuilder sb = new StringBuilder("");
+
+		try {
+			br = new BufferedReader(new FileReader(path.trim()));
+			try {
+				String line = br.readLine();
+				while (line != null) {
+					sb.append(line);
+					sb.append("\n");
+					line = br.readLine();
+				}
+			} finally {
+				br.close();
+			}
+		} catch (IOException io) {
+
+		}
+
+		Map<String, String> allTaxRelatedStuff = extractFields(sb.toString());
+		return allTaxRelatedStuff;
+
+	}
+	
 
 	private Map<String, String> getTextFromFiles(File uploadedFile) throws IOException {
 
@@ -192,8 +220,10 @@ public class DocumentServiceImpl implements DocumentService{
 		documentDetailsExtractor.extract(ocrText, documentDetails);
 		documentDetailsExtractor = new ChequeNumberExtractor();
 		documentDetailsExtractor.extract(ocrText, documentDetails);
+		mapOutValues.put("Amount", documentDetails.getAmount());
+		mapOutValues.put("ChequeNumber", documentDetails.getCheckNumber());
 		
-
+		
 		return mapOutValues;
 	}
 

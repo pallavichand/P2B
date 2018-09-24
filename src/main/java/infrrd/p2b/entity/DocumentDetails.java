@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public abstract class DocumentDetails {
+public class DocumentDetails {
 	private	String amount;
+	String checkNumber;
 }
