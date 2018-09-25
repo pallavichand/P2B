@@ -111,6 +111,12 @@ public class AmountExtractor implements DocumentDetailsExtractor {
 	    }
 	    return true;
 	}
+
+	@Override
+	public DocumentDetails extractRem(String ocrText, DocumentDetails docDetails) {
+		// TODO Auto-generated method stub
+		return extract(ocrText, docDetails);
+	}
 	
 
 

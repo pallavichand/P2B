@@ -168,5 +168,10 @@ public class PayorPayeeExtractor implements DocumentDetailsExtractor {
 		}
 		return newPayorString.trim();
 	}
+	@Override
+	public DocumentDetails extractRem(String ocrText, DocumentDetails docDetails) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

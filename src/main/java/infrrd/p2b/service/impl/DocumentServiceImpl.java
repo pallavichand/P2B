@@ -44,10 +44,10 @@ public class DocumentServiceImpl implements DocumentService{
 	
 	
 	@Override
-	public Map<String, String> processDocument(File file) throws IOException {
+	public Map<String, String> processDocument(File file, String type) throws IOException {
 		final File uploadedFile;
 		uploadedFile = storageService.uploadFile(file);
-		Map<String, String> values = getTextFromFiles(uploadedFile);
+		Map<String, String> values = getTextFromFiles(uploadedFile, type);
 		
 		//Map<String, String> values = getTextFromPDFUsingPoppler(uploadedFile);
 		//Map<String, String> values = getTextLocally(uploadedFile);
@@ -58,13 +58,13 @@ public class DocumentServiceImpl implements DocumentService{
 	}
 	
 	@Override
-	public Map<String, String> processDocumentwitoutUploading(File file) throws IOException {
+	public Map<String, String> processDocumentwitoutUploading(File file, String type) throws IOException {
 		// TODO Auto-generated method stub
 		
 		//Map<String, String> values = getTextFromFiles(file);
 		
 		//Map<String, String> values = getTextFromPDFUsingPoppler(file);
-		Map<String, String> values = getTextLocally(file);
+		Map<String, String> values = getTextLocally(file, type);
 		
 		return values;
 		
@@ -72,7 +72,7 @@ public class DocumentServiceImpl implements DocumentService{
 	}
 	
 
-	private Map<String, String> getTextLocally(File uploadedFile) throws IOException {
+	private Map<String, String> getTextLocally(File uploadedFile, String type) throws IOException {
 
 		String staticFolder = "/home/pallavi/work/Repos/POC/text";
 		String fileFolder = uploadedFile.getName().substring(0, uploadedFile.getName().lastIndexOf("."));
@@ -123,13 +123,13 @@ public class DocumentServiceImpl implements DocumentService{
 		
 		//String refinedWordsAll = refineUtils.refineThis(sb.toString());
 		//String refinedWordsFirstPage = refineUtils.refineThis(sbonly1.toString());
-		Map<String, String> allTaxRelatedStuff = extractFields(sb.toString());
+		Map<String, String> allTaxRelatedStuff = extractFields(sb.toString(), type);
 		return allTaxRelatedStuff;
 
 	}
 
 	@Override
-	public Map<String, String> getTextByPathToTest(String path) throws IOException {
+	public Map<String, String> getTextByPathToTest(String path, String type) throws IOException {
 
 		BufferedReader br;
 
@@ -151,13 +151,13 @@ public class DocumentServiceImpl implements DocumentService{
 
 		}
 
-		Map<String, String> allTaxRelatedStuff = extractFields(sb.toString());
+		Map<String, String> allTaxRelatedStuff = extractFields(sb.toString(), type);
 		return allTaxRelatedStuff;
 
 	}
 	
 
-	private Map<String, String> getTextFromFiles(File uploadedFile) throws IOException {
+	private Map<String, String> getTextFromFiles(File uploadedFile, String type) throws IOException {
 
 		Map<Integer, String> allFiles = getTextFromPythonApp(uploadedFile);
 		
@@ -206,16 +206,16 @@ public class DocumentServiceImpl implements DocumentService{
 		}
 		//String refinedWordsAll = refineUtils.refineThis(sb.toString());
 		//String refinedWordsFirstPage = refineUtils.refineThis(sbonly1.toString());
-		Map<String, String> allTaxRelatedStuff = extractFields(sb.toString());
+		Map<String, String> allTaxRelatedStuff = extractFields(sb.toString(), type );
 		return allTaxRelatedStuff;
 
 	}
 	
-	private Map<String, String> extractFields(String ocrText) throws IOException {
+	private Map<String, String> extractFields(String ocrText, String type) throws IOException {
 
 		Map<String, String> mapOutValues = new HashMap<>();
 		
-		
+		if(type.equals("chk")){
 		DocumentDetailsExtractor documentDetailsExtractor = new AmountExtractor();
 		DocumentDetails documentDetails = new DocumentDetails();
 		documentDetailsExtractor.extract(ocrText, documentDetails);
@@ -230,6 +230,14 @@ public class DocumentServiceImpl implements DocumentService{
 		mapOutValues.put("Payor", documentDetails.getPayor());
 		mapOutValues.put("Payee", documentDetails.getPayee());
 		mapOutValues.put("BillDate", documentDetails.getBillDate());
+		}
+		else if (type.equals("rem")){
+			DocumentDetailsExtractor documentDetailsExtractor = new AmountExtractor();
+			DocumentDetails documentDetails = new DocumentDetails();
+			documentDetailsExtractor.extractRem(ocrText, documentDetails);
+			documentDetailsExtractor = new ChequeNumberExtractor();
+			documentDetailsExtractor.extractRem(ocrText, documentDetails);
+		}
 		
 		
 		return mapOutValues;
@@ -297,7 +305,7 @@ public class DocumentServiceImpl implements DocumentService{
 		return intAbsolutePathNames;
 	}
 
-	private Map<String, String> getTextFromPDFUsingPoppler(File uploadedFileuploadedFile) throws IOException {
+	private Map<String, String> getTextFromPDFUsingPoppler(File uploadedFileuploadedFile, String type) throws IOException {
 
 		String fileName = uploadedFileuploadedFile.getAbsolutePath();
 		File textfile = new File(fileName.substring(0, fileName.lastIndexOf(".")) + ".txt");
@@ -329,7 +337,7 @@ public class DocumentServiceImpl implements DocumentService{
 				line = br.readLine();
 			}
 
-			return extractFields(sb.toString());
+			return extractFields(sb.toString(), type);
 		} finally {
 			br.close();
 		}

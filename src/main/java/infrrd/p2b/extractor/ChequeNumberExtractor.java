@@ -8,12 +8,13 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class ChequeNumberExtractor implements DocumentDetailsExtractor {
-	String findCheckwithKeywordRegex = "(Check)(\\W{1,4})(\\d{5,10})";
+	String findCheckwithKeywordRegex = "(check|check number)(\\W{1,4})(\\d{5,10})";
 	String [] chequeNumberExtractionRegexList = {"\\d{5,}$", "(?<!\\d)[\\d\\s]{9,15}$(?!\\d)"};
 
 	@Override
 	public DocumentDetails extract(String ocrText, DocumentDetails docDetails) {
 	//	log.info("Inside ChequeNumberExtractor class --> OCR text {}", ocrText);
+		ocrText =ocrText.toLowerCase();
 		boolean checkNOFound = false;
 		Pattern chequePattern = Pattern.compile(findCheckwithKeywordRegex);
 		Matcher chequeMatcher = chequePattern.matcher(ocrText);
@@ -49,6 +50,12 @@ public class ChequeNumberExtractor implements DocumentDetailsExtractor {
 		
 
 		return docDetails;
+	}
+
+	@Override
+	public DocumentDetails extractRem(String ocrText, DocumentDetails docDetails) {
+		// TODO Auto-generated method stub
+		return extract( ocrText, docDetails);
 	}
 
 }

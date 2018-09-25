@@ -45,26 +45,27 @@ public class P2BController {
 	@CrossOrigin
 	@RequestMapping("/getDataFromFile")
 	@PostMapping()
-	public ResponseEntity<?> newDocumentFileUpload(@RequestPart("file") MultipartFile file) throws IOException {
+	public ResponseEntity<?> newDocumentFileUpload(@RequestPart("file") MultipartFile file,
+			 @RequestParam ( value = "type", required = true) String type) throws IOException {
 
 		if ("pdf".equalsIgnoreCase(FilenameUtils.getExtension(file.getOriginalFilename()))) {
 
 			final File uploadedFile;
 			uploadedFile = storageService.uploadFile(file);
 
-			Map<String, String> output =documentService.processDocumentwitoutUploading(uploadedFile);
+			Map<String, String> output =documentService.processDocumentwitoutUploading(uploadedFile, type);
 
 			log.info("<------------------START-------------------->");
 			log.info("*********************************************");
 			log.info("Processing document with filename {}", file.getName());
 
 			// Map<String,String> outputJson = getFinalOutput (output);
-			Map<String, String> outputJson = new HashMap<String, String>();
+			//Map<String, String> outputJson = new HashMap<String, String>();
 
 			log.info("The Extracted values are "+new
-			 JSONObject(outputJson).toString());
+			 JSONObject(output).toString());
 			log.info("<--------------------------COMPLETED REQUEST------------------->");
-			return new ResponseEntity<String>(new JSONObject(outputJson).toString(), HttpStatus.OK);
+			return new ResponseEntity<String>(new JSONObject(output).toString(), HttpStatus.OK);
 		} else {
 			log.info("File of invalid type: ", file.getName());
 			return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).build();
