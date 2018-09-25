@@ -20,10 +20,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import infrrd.p2b.entity.ChequeDetails;
 import infrrd.p2b.entity.DocumentDetails;
 import infrrd.p2b.extractor.AmountExtractor;
 import infrrd.p2b.extractor.ChequeNumberExtractor;
+import infrrd.p2b.extractor.DateExtractor;
 import infrrd.p2b.extractor.DocumentDetailsExtractor;
 import infrrd.p2b.extractor.PayorPayeeExtractor;
 import infrrd.p2b.service.DocumentService;
@@ -217,15 +217,19 @@ public class DocumentServiceImpl implements DocumentService{
 		
 		
 		DocumentDetailsExtractor documentDetailsExtractor = new AmountExtractor();
-		DocumentDetails documentDetails = new ChequeDetails();
+		DocumentDetails documentDetails = new DocumentDetails();
 		documentDetailsExtractor.extract(ocrText, documentDetails);
 		documentDetailsExtractor = new ChequeNumberExtractor();
 		documentDetailsExtractor.extract(ocrText, documentDetails);
 		documentDetailsExtractor = new PayorPayeeExtractor();
 		documentDetailsExtractor.extract(ocrText, documentDetails);
+		documentDetailsExtractor = new DateExtractor();
+		documentDetailsExtractor.extract(ocrText, documentDetails);
 		mapOutValues.put("Amount", documentDetails.getAmount());
 		mapOutValues.put("ChequeNumber", documentDetails.getCheckNumber());
 		mapOutValues.put("Payor", documentDetails.getPayor());
+		mapOutValues.put("Payee", documentDetails.getPayee());
+		mapOutValues.put("BillDate", documentDetails.getBillDate());
 		
 		
 		return mapOutValues;

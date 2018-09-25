@@ -1,15 +1,9 @@
 package infrrd.p2b.extractor;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang3.StringUtils;
-
-import infrrd.p2b.entity.ChequeDetails;
 import infrrd.p2b.entity.DocumentDetails;
-import infrrd.p2b.entity.FieldDetails;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

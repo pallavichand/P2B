@@ -11,4 +11,6 @@ public class DocumentDetails {
 	private	String amount;
 	private	String checkNumber;
 	private	String payor;
+	private	String payee;
+	private	String billDate;
 }
