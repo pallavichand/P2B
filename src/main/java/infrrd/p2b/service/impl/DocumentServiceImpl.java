@@ -61,10 +61,10 @@ public class DocumentServiceImpl implements DocumentService{
 	public Map<String, String> processDocumentwitoutUploading(File file, String type) throws IOException {
 		// TODO Auto-generated method stub
 		
-		//Map<String, String> values = getTextFromFiles(file);
+		Map<String, String> values = getTextFromFiles(file, type);
 		
 		//Map<String, String> values = getTextFromPDFUsingPoppler(file);
-		Map<String, String> values = getTextLocally(file, type);
+		//Map<String, String> values = getTextLocally(file, type);
 		
 		return values;
 		
@@ -227,7 +227,7 @@ public class DocumentServiceImpl implements DocumentService{
 		documentDetailsExtractor.extract(ocrText, documentDetails);
 		mapOutValues.put("Amount", documentDetails.getAmount());
 		mapOutValues.put("ChequeNumber", documentDetails.getCheckNumber());
-		mapOutValues.put("Payor", documentDetails.getPayor());
+		mapOutValues.put("Payer", documentDetails.getPayor());
 		mapOutValues.put("Payee", documentDetails.getPayee());
 		mapOutValues.put("BillDate", documentDetails.getBillDate());
 		}
