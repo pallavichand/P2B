@@ -42,7 +42,7 @@ public class AmountExtractor implements DocumentDetailsExtractor {
 			}
 		}
 		if (!amountList.isEmpty()) {
-			String amountVal = getFinalAmountVal(amountList);
+			String amountVal = "$"+getFinalAmountVal(amountList);
 			log.info("Amount Value Found  --> OCR text {}", amountVal);
 			docDetails.setAmount(amountVal);
 		}

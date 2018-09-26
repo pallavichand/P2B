@@ -63,10 +63,10 @@ public class DocumentServiceImpl implements DocumentService{
 	public Map<String, String> processDocumentwitoutUploading(File file, String type) throws IOException {
 		// TODO Auto-generated method stub
 		
-		//Map<String, String> values = getTextFromFiles(file, type);
+		Map<String, String> values = getTextFromFiles(file, type);
 		
 		//Map<String, String> values = getTextFromPDFUsingPoppler(file);
-		Map<String, String> values = getTextLocally(file, type);
+		//Map<String, String> values = getTextLocally(file, type);
 		
 		return values;
 		
@@ -221,6 +221,7 @@ public class DocumentServiceImpl implements DocumentService{
 		Map<String, String> mapOutValues = new HashMap<>();
 		
 		if (type.equals("chk")) {
+			ocrText = ocrText.replaceAll(" +", " ");
 			DocumentDetailsExtractor documentDetailsExtractor = new AmountExtractor();
 			DocumentDetails documentDetails = new DocumentDetails();
 			documentDetailsExtractor.extract(ocrText, documentDetails);
