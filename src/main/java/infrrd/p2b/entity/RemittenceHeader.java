@@ -7,12 +7,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class FieldDetails {
-	String values;
-	boolean isVicinity;
-	String vicinityWord;
-	boolean isSpecialSymbol;
-	String specialSymbolValue;
-	
-	
+public class RemittenceHeader {
+String header;
+int startIndex;
+int endIndex;
 }

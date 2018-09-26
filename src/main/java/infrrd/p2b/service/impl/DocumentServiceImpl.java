@@ -20,12 +20,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import infrrd.p2b.entity.DocumentDetails;
 import infrrd.p2b.extractor.AmountExtractor;
 import infrrd.p2b.extractor.AmountsRelatedRemExtractor;
 import infrrd.p2b.extractor.ChequeNumberExtractor;
 import infrrd.p2b.extractor.DateExtractor;
 import infrrd.p2b.extractor.DocumentDetailsExtractor;
+import infrrd.p2b.extractor.InvoiceDetailsListExtractor;
 import infrrd.p2b.extractor.PayorPayeeExtractor;
 import infrrd.p2b.service.DocumentService;
 import infrrd.p2b.service.StorageService;
@@ -42,6 +45,7 @@ public class DocumentServiceImpl implements DocumentService{
 	@Autowired
 	AmountsRelatedRemExtractor amountsRelatedRemExtractor;
 
+
 	private String url;
 	
 	
@@ -49,10 +53,10 @@ public class DocumentServiceImpl implements DocumentService{
 	public Map<String, String> processDocument(File file, String type) throws IOException {
 		final File uploadedFile;
 		uploadedFile = storageService.uploadFile(file);
-		Map<String, String> values = getTextFromFiles(uploadedFile, type);
+		//Map<String, String> values = getTextFromFiles(uploadedFile, type);
 		
 		//Map<String, String> values = getTextFromPDFUsingPoppler(uploadedFile);
-		//Map<String, String> values = getTextLocally(uploadedFile);
+		Map<String, String> values = getTextLocally(uploadedFile, type);
 		
 		return values;
 		
@@ -246,11 +250,15 @@ public class DocumentServiceImpl implements DocumentService{
 			documentDetailsExtractor.extract(ocrText, documentDetails);
 			documentDetailsExtractor = new PayorPayeeExtractor();
 			documentDetailsExtractor.extract(ocrText, documentDetails);
+			documentDetailsExtractor = new InvoiceDetailsListExtractor();
+			documentDetailsExtractor.extractRem(ocrText, documentDetails);
 			mapOutValues.put("Cheque Number", documentDetails.getCheckNumber());
 			mapOutValues.put("Cheque Date", documentDetails.getBillDate());
 			mapOutValues.put("Payer", documentDetails.getPayor());
 			mapOutValues.putAll(amountsRelatedMap);
-
+			ObjectMapper mapper = new ObjectMapper();
+			
+			mapOutValues.put("Invoice Details",mapper.writeValueAsString(documentDetails.getInvoiceDetails()) );
 		}
 		
 		

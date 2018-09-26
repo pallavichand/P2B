@@ -1,9 +1,11 @@
 package infrrd.p2b.train.data;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -29,7 +31,8 @@ public class PayerPayeeDataSet {
 	public Map<String,String> comparePayerpayeeList(String ocrText) {
 		payerpayeeList = getPayerpayeeList();
 		String dataSearchRegex = "\\W({0})\\W";
-		Map<Integer, String> indexPlusCompany = new HashMap<Integer,String>();
+		Map<String, String> indexPlusCompany = new HashMap<String,String>();
+		List<String> values= new ArrayList<String>();
 		for (String payerPayee : payerpayeeList) {
 			String [] multipleValues = payerPayee.split("[:]");
 			
@@ -38,19 +41,19 @@ public class PayerPayeeDataSet {
 				Pattern datePattern = Pattern.compile(regexVal);
 				Matcher dateMatcher = datePattern.matcher(ocrText);
 				while(dateMatcher.find()){
-					indexPlusCompany.put(dateMatcher.start(), multipleValues[0]);
+					if(!values.contains(multipleValues[0])){
+						values.add(multipleValues[0]);
+						//indexPlusCompany.put(dateMatcher.start(), multipleValues[0]);
+					}
+					
 				}
 			}
 		}
 		
 		
-		return refinePayerPayee(indexPlusCompany);
+		return indexPlusCompany;
 		
 	}
 
-	private Map<String, String> refinePayerPayee(Map<Integer, String> indexPlusCompany) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }
 

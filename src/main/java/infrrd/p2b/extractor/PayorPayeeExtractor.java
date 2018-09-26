@@ -111,7 +111,7 @@ public class PayorPayeeExtractor implements DocumentDetailsExtractor {
 		return false;
 	}
 	private String refinePayeeValue(String payeeFound) {
-		String[] prePayeeWords = { "to", "oroer", "order", "pay" };
+		String[] prePayeeWords = { "to", "oroer", "order", "pay", "he" };
 		String[] postPayeeWords = { "envelofe" , "envelope", "of", "detals", "details", "be", " to "};
 		payeeFound = payeeFound.replaceAll("[\\[\\]\\{\\};|:]", "").trim();
 		String[] payeeWords = payeeFound.toLowerCase().split(" ");
