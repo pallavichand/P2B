@@ -22,6 +22,7 @@ import org.springframework.web.client.RestTemplate;
 
 import infrrd.p2b.entity.DocumentDetails;
 import infrrd.p2b.extractor.AmountExtractor;
+import infrrd.p2b.extractor.AmountsRelatedRemExtractor;
 import infrrd.p2b.extractor.ChequeNumberExtractor;
 import infrrd.p2b.extractor.DateExtractor;
 import infrrd.p2b.extractor.DocumentDetailsExtractor;
@@ -38,7 +39,8 @@ public class DocumentServiceImpl implements DocumentService{
 	@Autowired
 	StorageService storageService;
 
-	
+	@Autowired
+	AmountsRelatedRemExtractor amountsRelatedRemExtractor;
 
 	private String url;
 	
@@ -61,7 +63,7 @@ public class DocumentServiceImpl implements DocumentService{
 	public Map<String, String> processDocumentwitoutUploading(File file, String type) throws IOException {
 		// TODO Auto-generated method stub
 		
-		//Map<String, String> values = getTextFromFiles(file);
+		//Map<String, String> values = getTextFromFiles(file, type);
 		
 		//Map<String, String> values = getTextFromPDFUsingPoppler(file);
 		Map<String, String> values = getTextLocally(file, type);
@@ -74,9 +76,12 @@ public class DocumentServiceImpl implements DocumentService{
 
 	private Map<String, String> getTextLocally(File uploadedFile, String type) throws IOException {
 
-		String staticFolder = "/home/pallavi/work/Repos/POC/text";
+		
 		String fileFolder = uploadedFile.getName().substring(0, uploadedFile.getName().lastIndexOf("."));
-		File textFilesFolder = new File(staticFolder );
+		
+		String fullPath  = uploadedFile.getParentFile().getAbsolutePath();
+		fileFolder = fullPath +"/" + fileFolder;
+		File textFilesFolder = new File(fileFolder );
 		Map<Integer, String> intAbsolutePathNames = new HashMap<Integer, String>();
 
 		if (textFilesFolder.isDirectory()) {
@@ -215,28 +220,33 @@ public class DocumentServiceImpl implements DocumentService{
 
 		Map<String, String> mapOutValues = new HashMap<>();
 		
-		if(type.equals("chk")){
-		DocumentDetailsExtractor documentDetailsExtractor = new AmountExtractor();
-		DocumentDetails documentDetails = new DocumentDetails();
-		documentDetailsExtractor.extract(ocrText, documentDetails);
-		documentDetailsExtractor = new ChequeNumberExtractor();
-		documentDetailsExtractor.extract(ocrText, documentDetails);
-		documentDetailsExtractor = new PayorPayeeExtractor();
-		documentDetailsExtractor.extract(ocrText, documentDetails);
-		documentDetailsExtractor = new DateExtractor();
-		documentDetailsExtractor.extract(ocrText, documentDetails);
-		mapOutValues.put("Amount", documentDetails.getAmount());
-		mapOutValues.put("ChequeNumber", documentDetails.getCheckNumber());
-		mapOutValues.put("Payor", documentDetails.getPayor());
-		mapOutValues.put("Payee", documentDetails.getPayee());
-		mapOutValues.put("BillDate", documentDetails.getBillDate());
-		}
-		else if (type.equals("rem")){
+		if (type.equals("chk")) {
 			DocumentDetailsExtractor documentDetailsExtractor = new AmountExtractor();
 			DocumentDetails documentDetails = new DocumentDetails();
-			documentDetailsExtractor.extractRem(ocrText, documentDetails);
+			documentDetailsExtractor.extract(ocrText, documentDetails);
 			documentDetailsExtractor = new ChequeNumberExtractor();
-			documentDetailsExtractor.extractRem(ocrText, documentDetails);
+			documentDetailsExtractor.extract(ocrText, documentDetails);
+			documentDetailsExtractor = new PayorPayeeExtractor();
+			documentDetailsExtractor.extract(ocrText, documentDetails);
+			documentDetailsExtractor = new DateExtractor();
+			documentDetailsExtractor.extract(ocrText, documentDetails);
+			mapOutValues.put("Amount", documentDetails.getAmount());
+			mapOutValues.put("ChequeNumber", documentDetails.getCheckNumber());
+			mapOutValues.put("Payer", documentDetails.getPayor());
+			mapOutValues.put("Payee", documentDetails.getPayee());
+			mapOutValues.put("BillDate", documentDetails.getBillDate());
+		}
+		else if (type.equals("rem")){
+			
+			
+			Map<String, String> amountsRelatedMap = amountsRelatedRemExtractor.getFields(ocrText);
+			
+			
+			
+			mapOutValues.putAll(amountsRelatedMap);
+			
+			
+			
 		}
 		
 		
