@@ -231,22 +231,25 @@ public class DocumentServiceImpl implements DocumentService{
 			documentDetailsExtractor = new DateExtractor();
 			documentDetailsExtractor.extract(ocrText, documentDetails);
 			mapOutValues.put("Amount", documentDetails.getAmount());
-			mapOutValues.put("ChequeNumber", documentDetails.getCheckNumber());
+			mapOutValues.put("Cheque Number", documentDetails.getCheckNumber());
 			mapOutValues.put("Payer", documentDetails.getPayor());
 			mapOutValues.put("Payee", documentDetails.getPayee());
-			mapOutValues.put("BillDate", documentDetails.getBillDate());
-		}
-		else if (type.equals("rem")){
-			
-			
+			mapOutValues.put("Cheque Date", documentDetails.getBillDate());
+		} else if (type.equals("rem")) {
+
 			Map<String, String> amountsRelatedMap = amountsRelatedRemExtractor.getFields(ocrText);
-			
-			
-			
+			DocumentDetailsExtractor documentDetailsExtractor = new ChequeNumberExtractor();
+			DocumentDetails documentDetails = new DocumentDetails();
+			documentDetailsExtractor.extractRem(ocrText, documentDetails);
+			documentDetailsExtractor = new DateExtractor();
+			documentDetailsExtractor.extract(ocrText, documentDetails);
+			documentDetailsExtractor = new PayorPayeeExtractor();
+			documentDetailsExtractor.extract(ocrText, documentDetails);
+			mapOutValues.put("Cheque Number", documentDetails.getCheckNumber());
+			mapOutValues.put("Cheque Date", documentDetails.getBillDate());
+			mapOutValues.put("Payer", documentDetails.getPayor());
 			mapOutValues.putAll(amountsRelatedMap);
-			
-			
-			
+
 		}
 		
 		
