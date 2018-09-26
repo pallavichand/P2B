@@ -1,0 +1,10 @@
+p14:18:08.377 [Test worker] INFO infrrd.p2b.extractor.AmountExtractor - Amount Value Found  --> OCR text $143.36
+z14:18:08.382 [Test worker] INFO infrrd.p2b.extractor.ChequeNumberExtractor - Cheque Number Found  --> OCR text 0000995638
+{14:18:08.386 [Test worker] INFO infrrd.p2b.extractor.PayorPayeeExtractor - Payor Found  -->  Absolute Security Systems Inc
+l14:18:08.390 [Test worker] INFO infrrd.p2b.extractor.PayorPayeeExtractor - Payee Found  -->  2d Electronics
+n14:18:08.392 [Test worker] INFO infrrd.p2b.extractor.DateExtractor - Date Value Found  --> september 14, 2017
+k14:18:08.393 [Test worker] INFO infrrd.p2b.extractor.test.ChequeExtractorTest - Amount Found  -->  $143.36
+u14:18:08.393 [Test worker] INFO infrrd.p2b.extractor.test.ChequeExtractorTest - Cheque Number Found  -->  0000995638
+14:18:08.393 [Test worker] INFO infrrd.p2b.extractor.test.ChequeExtractorTest - Payor Found  --> Absolute Security Systems Inc
+p14:18:08.393 [Test worker] INFO infrrd.p2b.extractor.test.ChequeExtractorTest - Payee Found  --> 2d Electronics
+x14:18:08.393 [Test worker] INFO infrrd.p2b.extractor.test.ChequeExtractorTest - Bill Date Found  --> september 14, 2017
