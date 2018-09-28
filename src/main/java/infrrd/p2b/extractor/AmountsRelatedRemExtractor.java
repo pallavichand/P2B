@@ -29,7 +29,7 @@ public class AmountsRelatedRemExtractor {
 			
 			if (ocrText.contains("tvp nyc")) {
 
-				String totalUsdRegex = "(?<=usd).{0,100}([$]?\\d[\\d.,]+)";
+				String totalUsdRegex = "(?<=usd).{0,500}([$]?\\d[\\d.,]+)";
 
 				p = Pattern.compile(totalUsdRegex);
 				Matcher m3 = p.matcher(line);
@@ -47,7 +47,7 @@ public class AmountsRelatedRemExtractor {
 			
 			if (!found) {
 
-				String totalAllRegex = "(?<=total).{0,100}([$]?\\d[\\d.,]+)[ ]+([$]?\\d[\\d.,]+)[ ]+([$]?\\d[\\d.,]+)";
+				String totalAllRegex = "(?<=total).{0,500}([$]?\\d[\\d.,]+)[ ]+([$]?\\d[\\d.,]+)[ ]+([$]?\\d[\\d.,]+)";
 				if (line.contains("total")) {
 
 					p = Pattern.compile(totalAllRegex);
@@ -66,7 +66,7 @@ public class AmountsRelatedRemExtractor {
 			}
 
 			if (!found) {
-				String totalRegex = "(?<=total|payment|check am).{0,100}([$]?\\d[\\d.,]+)";
+				String totalRegex = "(?<=total|payment|check am).{0,500}([$]?\\d[\\d.,]+)";
 				p = Pattern.compile(totalRegex);
 				Matcher m1 = p.matcher(line);
 

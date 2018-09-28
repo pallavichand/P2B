@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class AmountExtractor implements DocumentDetailsExtractor {
 
-	String amountExtractionRegex = "(?<!\\d)(\\d{1,3}[,]?){1,3}\\d{1,3}[.]\\d{1,2}(?!\\d)";
+	String amountExtractionRegex = "(?<!\\d)(\\d{1,3}[,]?){0,3}\\d{1,3}[.]\\d{1,2}(?!\\d)";
 	@Override
 	public DocumentDetails extract(String ocrText, DocumentDetails docDetails) {
 	//	log.info("Inside AmountExtractor  --> OCR text {}", ocrText);

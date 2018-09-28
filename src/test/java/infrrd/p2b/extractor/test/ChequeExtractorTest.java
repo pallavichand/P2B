@@ -4,11 +4,16 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.junit.Test;
+import org.springframework.boot.test.mock.mockito.MockBean;
+
+import infrrd.p2b.extractor.AmountsRelatedRemExtractor;
 import infrrd.p2b.service.impl.DocumentServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ChequeExtractorTest {
 	
+	@MockBean
+    private AmountsRelatedRemExtractor amountsRelatedRemExtractor;
 	
     @Test
     public void testExtractDefault() throws IOException
@@ -31,16 +36,17 @@ public class ChequeExtractorTest {
     //	String fileName ="page-1.txt";
      //Remmitences --------------------------------------------------------------------------------------------
      //String fileName = "2D_LB_DOCS_9.19.17-page-2-1.txt"; 
-  // String fileName = "70KFT_LB_DOCS_9.19.17-page-2-1.txt";
+   //String fileName = "70KFT_LB_DOCS_9.19.17-page-2-1.txt";
     // String fileName = "AGENCY_LB_DOCS_9.18.17-page-2-1.txt";
-    //String fileName = "CAGNEY_ACH_9.20.17-page-2-1.txt"; //Dummy
+   // String fileName = "CAGNEY_ACH_9.20.17-page-2-1.txt"; //Dummy
      //String fileName = "SEVEN_LB_DOCS_9.19.17.pdf-page-2-1.txt";
      //String fileName = "SEVEN_LB_DOCS_9.19.17.pdf-page-5-1.txt";
-     String fileName = "SMARI_LB_DOCS_9.19.17.pdf-page-5-1.txt";
+    	String fileName = "SMARI_LB_DOCS_9.19.17.pdf-page-2-1.txt"; 
+     //String fileName = "page-1.txt";
         
         DocumentServiceImpl documentService = new DocumentServiceImpl();
         try{
-        Map<String, String> match = documentService.getTextByPathToTest( filePath+fileName ,  "chk");
+        Map<String, String> match = documentService.getTextByPathToTest( filePath+fileName ,  "rem");
         log.info("Amount Found  -->  {}", match.get("Amount"));
         log.info("Cheque Number Found  -->  {}",  match.get("Cheque Number"));
         log.info("Payor Found  --> {}",  match.get("Payer"));

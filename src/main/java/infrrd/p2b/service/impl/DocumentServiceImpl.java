@@ -53,10 +53,10 @@ public class DocumentServiceImpl implements DocumentService{
 	public Map<String, String> processDocument(File file, String type) throws IOException {
 		final File uploadedFile;
 		uploadedFile = storageService.uploadFile(file);
-		//Map<String, String> values = getTextFromFiles(uploadedFile, type);
+		Map<String, String> values = getTextFromFiles(uploadedFile, type);
 		
 		//Map<String, String> values = getTextFromPDFUsingPoppler(uploadedFile);
-		Map<String, String> values = getTextLocally(uploadedFile, type);
+		//Map<String, String> values = getTextLocally(uploadedFile, type);
 		
 		return values;
 		
@@ -168,7 +168,7 @@ public class DocumentServiceImpl implements DocumentService{
 
 	private Map<String, String> getTextFromFiles(File uploadedFile, String type) throws IOException {
 
-		Map<Integer, String> allFiles = getTextFromPythonApp(uploadedFile);
+		Map<Integer, String> allFiles = getTextFromPythonApp(uploadedFile, type);
 		
 		String parentDirectoryPlusPDFTextDirectory = uploadedFile.getParentFile().getAbsolutePath() + "/"
 				+ uploadedFile.getName().substring(0, uploadedFile.getName().lastIndexOf("."));
@@ -241,8 +241,9 @@ public class DocumentServiceImpl implements DocumentService{
 			mapOutValues.put("Payee", documentDetails.getPayee());
 			mapOutValues.put("Cheque Date", documentDetails.getBillDate());
 		} else if (type.equals("rem")) {
-
+		//	AmountsRelatedRemExtractor amountsRelatedRemExtractor= new AmountsRelatedRemExtractor();
 			Map<String, String> amountsRelatedMap = amountsRelatedRemExtractor.getFields(ocrText);
+			
 			DocumentDetailsExtractor documentDetailsExtractor = new ChequeNumberExtractor();
 			DocumentDetails documentDetails = new DocumentDetails();
 			documentDetailsExtractor.extractRem(ocrText, documentDetails);
@@ -257,8 +258,9 @@ public class DocumentServiceImpl implements DocumentService{
 			mapOutValues.put("Payer", documentDetails.getPayor());
 			mapOutValues.putAll(amountsRelatedMap);
 			ObjectMapper mapper = new ObjectMapper();
-			
-			mapOutValues.put("Invoice Details",mapper.writeValueAsString(documentDetails.getInvoiceDetails()) );
+			String invoiceDetails = mapper.writeValueAsString(documentDetails.getInvoiceDetails());
+			mapOutValues.put("Invoice Details", invoiceDetails);
+			log.info("Invoice Details : {}", invoiceDetails);
 		}
 		
 		
@@ -266,7 +268,7 @@ public class DocumentServiceImpl implements DocumentService{
 	}
 
 	
-	private Map<Integer, String> getTextFromPythonApp(File uploadedFile) {
+	private Map<Integer, String> getTextFromPythonApp(File uploadedFile, String type) {
 
 		url = "http://127.0.0.1:8090/extract/data";
 		Map<Integer, String> intAbsolutePathNames = new HashMap<Integer, String>();
@@ -276,7 +278,8 @@ public class DocumentServiceImpl implements DocumentService{
 		Map<String, String> requestBody = new HashMap<String, String>();
 		requestBody.put("pdf_doc_location", uploadedFile.getAbsolutePath());
 		requestBody.put("page_dir_location", parentDirectoryPlusPDFTextDirectory);
-
+		requestBody.put("type", type);
+		
 		JSONObject someMap = new JSONObject(requestBody);
 
 		RestTemplate template = new RestTemplate();
