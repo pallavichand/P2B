@@ -40,8 +40,8 @@ public class ChequeExtractorTest {
     // String fileName = "AGENCY_LB_DOCS_9.18.17-page-2-1.txt";
    // String fileName = "CAGNEY_ACH_9.20.17-page-2-1.txt"; //Dummy
      //String fileName = "SEVEN_LB_DOCS_9.19.17.pdf-page-2-1.txt";
-     //String fileName = "SEVEN_LB_DOCS_9.19.17.pdf-page-5-1.txt";
-    	String fileName = "SMARI_LB_DOCS_9.19.17.pdf-page-2-1.txt"; 
+    // String fileName = "SEVEN_LB_DOCS_9.19.17.pdf-page-5-1.txt";
+     String fileName = "SMARI_LB_DOCS_9.19.17.pdf-page-5-1.txt"; 
      //String fileName = "page-1.txt";
         
         DocumentServiceImpl documentService = new DocumentServiceImpl();

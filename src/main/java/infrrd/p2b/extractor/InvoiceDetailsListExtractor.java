@@ -91,6 +91,7 @@ public class InvoiceDetailsListExtractor implements DocumentDetailsExtractor{
 
 	private List<RemittenceHeader> getInvoiceWithoutHeader(String text, List<InvoiceDetails> invoiceDetailsList) {
 		List<RemittenceHeader> remList = new ArrayList<RemittenceHeader>();
+		text = text.replace("§", "$");
 		InvoiceDetails invoiceDetails= new InvoiceDetails();
 	    text = removeUnwantedWords(text);
 		log.info("Text Found {}",text);
@@ -290,7 +291,7 @@ public class InvoiceDetailsListExtractor implements DocumentDetailsExtractor{
 		if((invoiceDetails.getGrossAmount()!= null && invoiceDetails.getGrossAmount().contains("$")) ||
 				(invoiceDetails.getNetAmount()!= null && invoiceDetails.getNetAmount().contains("$"))||
 				(invoiceDetails.getDiscountAmount()!= null && invoiceDetails.getDiscountAmount().contains("$")) ){
-			Pattern nonDollarPattern = Pattern.compile("(?<!\\d|[$])(5)((\\d{1,3}[,]?){0,3}\\d{1,3}[.]\\d{1,2})(?!\\d)");
+			Pattern nonDollarPattern = Pattern.compile("(?<!\\d|[$])(16|5)((\\d{1,3}[,]?){0,3}\\d{1,3}[.]\\d{1,2})(?!\\d)");
 			if(invoiceDetails.getNetAmount()!= null  && !invoiceDetails.getNetAmount().contains("$")){
 				Matcher nonDollarMatcher = nonDollarPattern.matcher(invoiceDetails.getNetAmount());
 				if(nonDollarMatcher.find()){
@@ -320,29 +321,44 @@ public class InvoiceDetailsListExtractor implements DocumentDetailsExtractor{
 		String net="";
 		String gross="";
 		if(invoiceDetails.getDiscountAmount()!= null){
-			discount= invoiceDetails.getDiscountAmount().replaceAll("[$,-]", "");
-			Pattern datePattern = Pattern.compile("([.,])(\\d{3}[.,])");
-			Matcher dateMatcher = datePattern.matcher(discount);
-			if(dateMatcher.find()){
-				discount = net.replaceAll(dateMatcher.group(), dateMatcher.group(2));
+			discount= invoiceDetails.getDiscountAmount().replaceAll("[$,\\-§¢°\\)'!\\+|\\\"]", "");
+			Pattern dataPattern = Pattern.compile("([.,])(\\d{3}[.,])");
+			Matcher dataMatcher = dataPattern.matcher(discount);
+			if(dataMatcher.find()){
+				discount = net.replaceAll(dataMatcher.group(), dataMatcher.group(2));
+			}
+			dataPattern = Pattern.compile("(\\d+[.]\\d{2})([.])");
+			dataMatcher = dataPattern.matcher(discount);
+			if(dataMatcher.find()){
+				discount = discount.replaceAll(dataMatcher.group(), dataMatcher.group(1));
 			}
 			invoiceDetails.setDiscountAmount("$"+discount);
 		}
 		if(invoiceDetails.getGrossAmount()!= null){
-			gross= invoiceDetails.getGrossAmount().replaceAll("[$,]", "");
-			Pattern datePattern = Pattern.compile("([.,])(\\d{3}[.,])");
-			Matcher dateMatcher = datePattern.matcher(net);
-			if(dateMatcher.find()){
-				net = net.replaceAll(dateMatcher.group(), dateMatcher.group(2));
+			gross= invoiceDetails.getGrossAmount().replaceAll("[$,\\-§¢°\\)'!\\+|\\\"]", "");
+			Pattern dataPattern = Pattern.compile("([.,])(\\d{3}[.,])");
+			Matcher dataMatcher = dataPattern.matcher(net);
+			if(dataMatcher.find()){
+				gross = gross.replaceAll(dataMatcher.group(), dataMatcher.group(2));
+			}
+			dataPattern = Pattern.compile("(\\d+[.]\\d{2})([.])");
+			dataMatcher = dataPattern.matcher(gross);
+			if(dataMatcher.find()){
+				gross = gross.replaceAll(dataMatcher.group(), dataMatcher.group(1));
 			}
 			invoiceDetails.setGrossAmount("$"+gross);
 		}
 		if(invoiceDetails.getNetAmount()!= null){
-			net= invoiceDetails.getNetAmount().replaceAll("[$,]", "");
-			Pattern datePattern = Pattern.compile("([.,])(\\d{3}[.,])");
-			Matcher dateMatcher = datePattern.matcher(net);
-			if(dateMatcher.find()){
-				net = net.replaceAll(dateMatcher.group(), dateMatcher.group(2));
+			net= invoiceDetails.getNetAmount().replaceAll("[$,\\-§¢°\\)'!\\+|\\\"]", "");
+			Pattern dataPattern = Pattern.compile("([.,])(\\d{3}[.,])");
+			Matcher dataMatcher = dataPattern.matcher(net);
+			if(dataMatcher.find()){
+				net = net.replaceAll(dataMatcher.group(), dataMatcher.group(2));
+			}
+			dataPattern = Pattern.compile("(\\d+[.]\\d{2})([.])");
+			dataMatcher = dataPattern.matcher(net);
+			if(dataMatcher.find()){
+				net = net.replaceAll(dataMatcher.group(), dataMatcher.group(1));
 			}
 			invoiceDetails.setNetAmount("$"+net);
 		}
@@ -350,10 +366,13 @@ public class InvoiceDetailsListExtractor implements DocumentDetailsExtractor{
 			return invoiceDetails;
 		}
 		else {
+			double disc= 0.00;
+			double netAmt= 0.00;
+			double grossAmt=0.00;
 			try {
 				if (invoiceDetails.getDiscountAmount() == null) {
 					if (invoiceDetails.getGrossAmount() != null && invoiceDetails.getNetAmount() != null) {
-						double disc = (Double.parseDouble(gross) - Double.parseDouble(net));
+						disc = (Double.parseDouble(gross) - Double.parseDouble(net));
 						discount = "$" + String.format("%.2f", disc);
 						invoiceDetails.setDiscountAmount(discount);
 					} else if (invoiceDetails.getGrossAmount() != null) {
@@ -365,19 +384,27 @@ public class InvoiceDetailsListExtractor implements DocumentDetailsExtractor{
 					}
 				} else if (invoiceDetails.getGrossAmount() == null) {
 					if (invoiceDetails.getNetAmount() != null) {
-						double grossAmt = (Double.parseDouble(net) + Double.parseDouble(discount));
-						gross = "$" + String.format("%.2f", grossAmt);
+						grossAmt = (Double.parseDouble(net) + Double.parseDouble(discount));
+						gross =  String.format("%.2f", grossAmt);
 						invoiceDetails.setGrossAmount("$" + gross);
 					}
 				} else{
-					double netAmt = (Double.parseDouble(gross) - Double.parseDouble(discount));
-					net = "$" + String.format("%.2f", netAmt);
-					invoiceDetails.setGrossAmount("$" + net);
+					netAmt = (Double.parseDouble(gross) - Double.parseDouble(discount));
+					net = String.format("%.2f", netAmt);
+					invoiceDetails.setNetAmount("$" + net);
 				}
+//				if(grossAmt > 0.01 && netAmt > 0.01){
+//					if(grossAmt < netAmt){
+//						grossAmt = netAmt+disc;
+//						gross = "$" + String.format("%.2f", grossAmt);
+//						invoiceDetails.setGrossAmount("$" + gross);
+//					}
+//				}
 			} catch (Exception e) {
 				log.error("Error happenedconverting numbers {}", e.getMessage());
 			}
 		}
+		
 		return invoiceDetails;
 		
 	}
@@ -480,7 +507,7 @@ public class InvoiceDetailsListExtractor implements DocumentDetailsExtractor{
 			}
 		}
 		if(count >2){
-			text = text.replaceAll("[|:]", " ");
+			text = text.replaceAll("[|:~]", " ");
 			String [] headers = text.split("  +");
 			List<RemittenceHeader> remList = new ArrayList<RemittenceHeader>();
 			//String regexForHeaders = "invoice number|invoice no.|invoice|invoice date|date|net amount|gross amount|discount amount|amount";
